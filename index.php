@@ -1,33 +1,44 @@
-<?php
+<?php 
 
-  require_once 'vendor/autoload.php';
-  require_once 'credentials.php';
-  // D:\Code\hunterinitiative\2021\Inprogress\mail\vendor
+require_once './vendor/autoload.php';
+require_once './credentials.php';
 
-  // create email
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+  // Create the Transport
   $transport = (new Swift_SmtpTransport('smtp.gmail.com', 587, 'tls'))
-    ->setUsername('EMAIL')
-    ->setPassword('PASS');
+    ->setUsername(EMAIL)
+    ->setPassword(PASS)
+  ;
 
-  // creating Mailer
+  // Create the Mailer using your created Transport
   $mailer = new Swift_Mailer($transport);
 
-  // create a message
-  $message = (new Swift_Message('Greetings'))
-  ->setFrom([EMAIL => 'Sender Name'])
-  ->setTo(['receiver@domain.org', 'other@domain.org' => 'A name'])
-  ->setBody('My Message');
+  // Create a message
+  $message = (new Swift_Message('Wonderful Subject'))
+    ->setFrom([EMAIL => SENDER_NAME])
+    ->setTo([$_POST['email'] => $_POST['name']])
+    ->setBody('Here is the message itself')
+    ;
 
-  // send message
-  $result = $mailer -> send($message);
+  // Send the message
+  $result = $mailer->send($message);
 
   if ($result) {
     
-    return 'successfull';
+    echo 'Successful';
   } else {
-    
-    return 'Oops Something Went Wrong!!!';
+    echo 'Failed to send';
   }
-  
+
+}
 
 ?>
+
+<div style="display: flex">
+  <form action="" method="POST">
+    <input type="text" name="name" placeholder="Enter receiver's name"> <br> <br>
+    <input type="text" name="email" placeholder="Enter receiver's email"> <br> <br>
+    <button type="submit">Send Email</button>
+  </form>
+</div>
